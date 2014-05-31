@@ -11,29 +11,30 @@ import subprocess as sb
 
 from Daemon import Daemon
 
-#from   shlex                      import split
 
 def SearchFile(motif, pdir=".", recurse=False, exclude=None):
-	"""Cherche dans le répertoire courant (et dans les sous-répertoires, si recurse = True (False par défaut)) si un motif ou un dossier contient la chaîne "motif".
+    """Cherche dans le répertoire courant (et dans les sous-répertoires, si
+    recurse = True (False par défaut)) si un motif ou un dossier contient la
+    chaîne "motif".
 
-	motif           :: motif recherché.
-	pdir    = "."   :: Répertoire parent à partir duquel rechercher.
-	recurse = False :: récursif ou non (défaut : non récursif).
-	"""
+    motif           :: motif recherché.
+    pdir    = "."   :: Répertoire parent à partir duquel rechercher.
+    recurse = False :: récursif ou non (défaut : non récursif).
+    """
 
-	res = []
+    res = []
 
-	for i in os.listdir(pdir):
-		i = os.path.join(pdir, i)
-		if recurse and os.path.isdir(i):
-			#res.append(SearchFile(motif, pdir=i, recurse=recurse))
-			res = res + SearchFile(motif, pdir=i, recurse=recurse)
-			while [] in res:
-				res.remove([])
-		elif re.search(motif, i) is not None:
-			if exclude is None or re.search(exclude, i) is None:
-				res.append(i)
-	return res
+    for i in os.listdir(pdir):
+        i = os.path.join(pdir, i)
+        if recurse and os.path.isdir(i):
+            # res.append(SearchFile(motif, pdir=i, recurse=recurse))
+            res = res + SearchFile(motif, pdir=i, recurse=recurse)
+            while [] in res:
+                res.remove([])
+        elif re.search(motif, i) is not None:
+            if exclude is None or re.search(exclude, i) is None:
+                res.append(i)
+    return res
 
 
 class WallPaper(Daemon):
@@ -53,7 +54,7 @@ class WallPaper(Daemon):
         self.recurse = True
         if directory is not None:
             self.directory = directory
-            #self.List_File = dir.SearchFile(motif, pdir=directory, recurse=recurse)
+            # self.List_File = dir.SearchFile(motif, pdir=directory, recurse=recurse)
         self.prog = "feh"
         self.opt = "--bg-scale"
         self.time = Time
@@ -63,7 +64,7 @@ class WallPaper(Daemon):
         self.prog = prog
 
     def Get_cmd(self):
-        return prog
+        return self.prog
 
     def Del_cmd(self):
         self.prog = "feh"
@@ -71,10 +72,10 @@ class WallPaper(Daemon):
     def Set_directory(self, directory):
         self.directory = directory
         # if directory is not None:
-            #self.List_File = dir.SearchFile(motif, pdir=directory, recurse=recurse)
+            # self.List_File = dir.SearchFile(motif, pdir=directory, recurse=recurse)
 
     def Get_directory(self):
-        return directory
+        return self.directory
 
     def Del_directory(self):
         self.directory = None
@@ -83,7 +84,7 @@ class WallPaper(Daemon):
         self.opt = opt
 
     def Get_opt(self):
-        return opt
+        return self.opt
 
     def Del_opt(self):
         self.opt = "--bg-scale"
@@ -196,7 +197,9 @@ def main(args):
         wall()
 
 if __name__ == '__main__':
-    parser = ag.ArgumentParser()
+    parser = ag.ArgumentParser(
+        formatter_class=ag.ArgumentDefaultsHelpFormatter,
+    )
     parser.add_argument(
         "Directory",
         nargs='?',
