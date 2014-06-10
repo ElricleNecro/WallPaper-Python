@@ -1,0 +1,11 @@
+[Unit]
+Description=Daemon for changing wallpaper
+
+[Service]
+Environment="DISPLAY=:0"
+ExecStart=/home/{user}/.local/bin/wallpaper.py %h/Images/backgrounds/ -t 2.0 --dual --daemon --pidfile /tmp/wallpaper.pid
+ExecStop=/home/{user}/.local/bin/wallpaper.py --kill --pidfile /tmp/wallpaper.pid
+PIDFile=/tmp/wallpaper.pid
+
+[Install]
+WantedBy=multi-user.target
