@@ -5,11 +5,12 @@ import shlex
 
 import os
 import re
+import sys
 import random as rd
 import argparse as ag
 import subprocess as sb
 
-from Daemon import Daemon
+from WallPaperd.Daemon import Daemon
 
 
 def SearchFile(motif, pdir=".", recurse=False, exclude=None):
@@ -54,11 +55,11 @@ class WallPaper(Daemon):
         self.recurse = True
         if directory is not None:
             self.directory = directory
-            # self.List_File = dir.SearchFile(motif, pdir=directory, recurse=recurse)
-        self.prog = "feh"
+            self.prog = "feh"
         self.opt = "--bg-scale"
         self.time = Time
         self.dual = False
+        self.environment = os.environ.copy()
 
     def Set_cmd(self, prog):
         self.prog = prog
@@ -71,8 +72,6 @@ class WallPaper(Daemon):
 
     def Set_directory(self, directory):
         self.directory = directory
-        # if directory is not None:
-            # self.List_File = dir.SearchFile(motif, pdir=directory, recurse=recurse)
 
     def Get_directory(self):
         return self.directory
@@ -123,11 +122,17 @@ class WallPaper(Daemon):
             cmd += " " + '"' + \
                 self.List_File[rd.randint(0, len(self.List_File)-1)] + '"'
         print("Commande : ", cmd)
-        make = sb.Popen(shlex.split(cmd), stdout=sb.PIPE, stderr=sb.PIPE)
+        make = sb.Popen(
+            shlex.split(cmd),
+            stdout=sb.PIPE,
+            stderr=sb.PIPE,
+            env=self.environment,
+        )
         out, err = make.communicate()
         out = out.decode("utf-8").split('\n')
         err = err.decode("utf-8").split('\n')
-        print(out)
+        sys.stderr.write(err)
+        sys.stdout.write(out)
         print(err)
 
     def _search_file(self):
@@ -147,7 +152,7 @@ class WallPaper(Daemon):
             if self.dual:
                 cmd += " " + '"' + \
                     self.List_File[rd.randint(0, len(self.List_File)-1)] + '"'
-            make = sb.Popen(shlex.split(cmd), stdout=sb.PIPE, stderr=sb.PIPE)
+            sb.Popen(shlex.split(cmd), stdout=sb.PIPE, stderr=sb.PIPE)
             sleep(self.Time)
 
     Directory = property(
@@ -165,14 +170,15 @@ class WallPaper(Daemon):
         Get_Time,
         Set_Time,
         Del_Time,
-        doc="Temps entre chaque changement de fond d'écran (mode démon uniquement).")
+        doc="Temps entre chaque changement de fond d'écran "
+        "(mode démon uniquement).")
     Dual = property(Get_Dual, Set_Dual, Del_Dual, doc="Multi-écran ou non.")
 
 
 def main(args):
     if args.kill:
         import sys
-        wall = WallPaper(None)
+        wall = WallPaper(None, pidfile=args.pidfile)
         wall.stop()
         sys.exit(0)
     if args.Directory is None:
@@ -180,7 +186,7 @@ def main(args):
         print("Vous devez indiquez un dossier ou l'option -k")
         sys.exit(1)
 
-    wall = WallPaper(args.Directory, args.expr)
+    wall = WallPaper(args.Directory, args.expr, pidfile=args.pidfile)
     wall.Cmd = args.prog
     wall.Opt = args.opt
 
@@ -213,13 +219,19 @@ if __name__ == '__main__':
     parser.add_argument(
         "--opt",
         type=str,
-        help="Options à passer au programme chargé de mettre le fond d'écran en place.",
+        help="Options à passer au programme chargé de mettre le fond "
+        "d'écran en place.",
         default="--bg-scale")
     parser.add_argument(
         "--prog",
         type=str,
         help="Programme mettant le place un fond d'écran.",
         default="feh")
+    parser.add_argument(
+        "--pidfile",
+        type=str,
+        help="Pidfile",
+        default="/tmp/wallpaper.pid")
     parser.add_argument(
         "-d",
         "--daemon",
@@ -235,7 +247,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "-k",
         "--kill",
-        help="Temps entre chaque changement de fond d'écran.",
+        help="Tue le daemon",
         action='store_true')
     parser.add_argument(
         "-m",
