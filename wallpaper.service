@@ -8,4 +8,4 @@ ExecStop=/home/{user}/.local/bin/wallpaper.py --kill --pidfile /tmp/wallpaper.pi
 PIDFile=/tmp/wallpaper.pid
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
