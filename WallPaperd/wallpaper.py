@@ -143,12 +143,12 @@ class WallPaper(Daemon):
             env=self._environment,
         )
 
-        out, err = make.communicate()
-        out = out.decode("utf-8").split('\n')
-        err = err.decode("utf-8").split('\n')
-        sys.stderr.write(err)
-        sys.stdout.write(out)
-        print(err)
+        #  out, err = make.communicate()
+        #  out = out.decode("utf-8").split('\n')
+        #  err = err.decode("utf-8").split('\n')
+        #  sys.stderr.write(err)
+        #  sys.stdout.write(out)
+        #  print(err)
 
     def _search_file(self):
         if self.directory is not None:
