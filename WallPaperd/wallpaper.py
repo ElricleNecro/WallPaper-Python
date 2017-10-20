@@ -27,7 +27,7 @@ class WallPaper(Daemon):
             pidfile="/tmp/pid.wallpaper"):
         super().__init__(pidfile)
         self.motif = motif
-        self.recurse = True
+        self.recurse = recurse
         if directory is not None:
             self.directory = directory
             self.prog = "feh"
@@ -126,8 +126,7 @@ class WallPaper(Daemon):
             file = self._list_file[rd.randint(0, len(self._list_file)-1)]
             cmd = self.prog + " " + self.opt + " " + '"' + file + '"'
             if self.dual:
-                cmd += " " + '"' + \
-                    self._list_file[rd.randint(0, len(self._list_file)-1)] + '"'
+                cmd += " \"%s\"" % self._list_file[rd.randint(0, len(self._list_file)-1)]
             sb.Popen(shlex.split(cmd), stdout=sb.PIPE, stderr=sb.PIPE)
             sleep(self.Time)
 
