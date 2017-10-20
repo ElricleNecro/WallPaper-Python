@@ -5,6 +5,8 @@
 
 import os
 import re
+import shlex
+import subprocess as sb
 
 
 def search_file(motif, pdir=".", recurse=False, exclude=None):
@@ -29,3 +31,10 @@ def search_file(motif, pdir=".", recurse=False, exclude=None):
             if exclude is None or re.search(exclude, i) is None:
                 res.append(i)
     return res
+
+
+def get_output(cmd, env=None):
+    """Execute a command and return it's stdout and stderr.
+    """
+    make = sb.Popen(shlex.split(cmd), stdout=sb.PIPE, stderr=sb.PIPE, env=env)
+    return make.communicate()
