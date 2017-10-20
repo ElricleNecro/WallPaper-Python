@@ -181,6 +181,7 @@ def main(args):
         wall = WallPaper(None, pidfile=args.pidfile)
         wall.stop()
         sys.exit(0)
+
     if args.Directory is None:
         import sys
         print("Vous devez indiquez un dossier ou l'option -k")
@@ -201,6 +202,7 @@ def main(args):
         wall.start()
     else:
         wall()
+
 
 if __name__ == '__main__':
     parser = ag.ArgumentParser(
