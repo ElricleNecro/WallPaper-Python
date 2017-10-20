@@ -20,14 +20,14 @@ def main(args):
         sys.exit(1)
 
     wall = WallPaper(args.Directory, args.expr, pidfile=args.pidfile)
-    wall.Cmd = args.prog
-    wall.Opt = args.opt
+    wall.cmd = args.prog
+    wall.opt = args.opt
 
     if args.dual:
-        wall.Dual = True
+        wall.dual = True
 
     if args.daemon:
-        wall.Time = args.time
+        wall.time = args.time
         if args.time is None:
             raise ValueError("Le temps de pause est invalide : None")
 
