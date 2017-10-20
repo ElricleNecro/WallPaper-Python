@@ -12,7 +12,7 @@ packages = st.find_packages()
 # --------------------------------------------------------------------------------------------------------------
 setup(
     name='WallPaperd',
-    version='0.2',
+    version='0.3',
     scripts=["wallpaper.py"],
     description='Wallpaper daemon.',
     author='Guillaume Plum, Manuel Duarte',
